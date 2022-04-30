@@ -5,52 +5,38 @@ using namespace class31;
 cl_base::cl_base(cl_base *p_parent, string object_name)
 {
 	set_object_name(object_name);
+	this->p_parent = p_parent;
 	set_parent(p_parent);
 }
 
-//Готовность для каждого объекта устанавливается индивидуально.
-//которое присваивается свойству состояния объекта.
-
-
-
 void cl_base::setIdReady(int id) {
-	if(id == 0) //Готовность задается посредством любого отличного от нуля целого числового значени
+	if(id == 0)
 	{
-//		if (children.size() > 0)
-//		{
-//			for (int i = 0; i < children.size(); i++) //При отключении головного, отключаются все объекты от него по иерархии вниз по ветке
-//			{
-//				//Свойству состояния объекта присваивается значение нуль.
-//				cl_base *child = children[i];
-//
-//				//При отключении головного, отключаются все объекты от него по иерархии вниз по ветке.
-//				//Свойству состояния объекта присваивается значение нуль.
-//				child->idReady = id;
-//				//child->setIdReady(id);
-//			}
-//		}
-//		this->idReady = id;
+		if (children.size() > 0)
+		{
+			for (int i = 0; i < children.size(); i++)
+			{
+				cl_base *child = children[i];
+				child->setIdReady(id);
+			}
+		}
+		this->idReady = id;
 	} else {
-		//bool flag = true;
-		//cl_base* parent = p_parent;
-		if (p_parent != nullptr && p_parent->isReady())
+		bool flag = true;
+		cl_base* parent = p_parent;
+		while(parent != nullptr)
+		{
+			if(!parent->isReady())
+			{
+				flag = false;
+				break;
+			}
+			parent = parent->p_parent;
+		}
+		if(flag)
 		{
 			this->idReady = id;
 		}
-//		while(parent != nullptr)
-//		{
-//			cout << parent->get_object_name() << endl;
-//			if(!parent->isReady()) // Объект переводится в состояние готовности, если все объекты вверх по иерархии до корневого включены
-//			{
-//				flag = false;
-//				break;
-//			}
-//			parent = parent->p_parent;
-//		}
-//		if(flag) //иначе установка готовности игнорируется.
-//		{
-//			this->idReady = id;
-//		}
 	}
 }
 
@@ -70,9 +56,9 @@ string cl_base::get_object_name()
 
 void cl_base::set_parent(cl_base *parent)
 {
-	this->p_parent = parent;
 	if(parent != nullptr)
 	{
+		this->p_parent = parent;
 		p_parent->add_child(this);
 	}
 }
@@ -139,27 +125,4 @@ void cl_base::show_object_next(cl_base *ob_parent, int i_level, bool isShowReady
 		ob_parent->it_child++;
 	}
 }
-
-/*void cl_base::show_object_tree()
-//{
-//	if(p_parent==nullptr)
-//	{
-//		cout<<object_name;
-//	}
-//	if(children.size()>0)
-//	{
-//		cout<<endl<<object_name;
-//		for(int i=0;i < children.size(); i++)
-//		{
-//			cl_base *child = children[i];
-//			cout<<"  "<<child->get_object_name();
-//		}
-//		for(int i=0;i<children.size();i++)
-//		{
-//			cl_base *child = children[i];
-//			child->show_object_tree();
-//		}
-//	}
- }*/
-
 // endregion

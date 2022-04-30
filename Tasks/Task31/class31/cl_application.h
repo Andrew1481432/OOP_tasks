@@ -6,12 +6,8 @@
 
 namespace class31
 {
-	//using MapType = std::function<cl_base*()>;
-
-class cl_application : public cl_base
+class cl_application: public cl_base
 {
-	    //std::map<int, MapType> classes;
-        cl_base* getClassById(int);
 	public:
 		const static int ID = 1;
 		cl_application(cl_base *p_parent);
@@ -19,8 +15,6 @@ class cl_application : public cl_base
 		void build_tree_objects();
 
 		int exec_app();
-
-		static int getId();
 	};
 }
 

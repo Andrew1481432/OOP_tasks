@@ -22,8 +22,6 @@ namespace class31
 		vector<cl_base *> children; // ссылка на потомков
 		vector<cl_base *>::iterator it_child;
 
-		//static int getId();
-
 		cl_base(cl_base *p_parent = nullptr, string object_name = "Empty");
 
 		void set_object_name(string object_name);

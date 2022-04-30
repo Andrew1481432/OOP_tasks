@@ -8,46 +8,7 @@
 using namespace class31;
 
 cl_application::cl_application(cl_base *p_parent): cl_base(p_parent)
-{
-	/*classes[cl_node2::getId()] = []() { return new cl_node2();};
-	classes[cl_node3::getId()] = []() { return new cl_node3();};
-	classes[cl_node4::getId()] = []() { return new cl_node4();};
-	classes[cl_node5::getId()] = []() { return new cl_node5();};
-	classes[cl_node6::getId()] = []() { return new cl_node6();};*/
-}
-
-// потом описать алгоритм ready
-cl_base* cl_application::getClassById(int id)
-{
-	switch(id) {
-		case cl_node2::ID:
-			return new cl_node2();
-		case cl_node3::ID:
-			return new cl_node3();
-		case cl_node4::ID:
-			return new cl_node4();
-		case cl_node5::ID:
-			return new cl_node5();
-		case cl_node6::ID:
-			return new cl_node6();
-		default:
-			throw std::invalid_argument("getClassById dont found class with id "+ to_string(id));
-	}
-}
-
-/*cl_base* cl_application::getClassById(int id)
-{
-	if(classes.count(id)) {
-		return classes[id]();
-	} else {
-		throw std::invalid_argument("getClassById dont found class with id "+ to_string(id));
-	}
-}*/
-
-int cl_application::getId()
-{
-	return 1;
-}
+{}
 
 void cl_application::build_tree_objects()
 {
@@ -71,9 +32,26 @@ void cl_application::build_tree_objects()
 			cerr << "Error::Head object not found!" << endl;
 			return;
 		}
-		//cout << "debug temp_p_parent name: " << temp_p_parent->get_object_name() << endl;
 		try {
-			nextObj = getClassById(id);
+			switch(id) {
+				case cl_node2::ID:
+					nextObj = new cl_node2();
+					break;
+				case cl_node3::ID:
+					nextObj = new cl_node3();
+					break;
+				case cl_node4::ID:
+					nextObj = new cl_node4();
+					break;
+				case cl_node5::ID:
+					nextObj = new cl_node5();
+					break;
+				case cl_node6::ID:
+					nextObj = new cl_node6();
+					break;
+				default:
+					throw std::invalid_argument("getClassById dont found class with id "+ to_string(id));
+			}
 			nextObj->set_object_name(nextObjName);
 			nextObj->set_parent(headObj);
 		} catch (std::invalid_argument& e) {
@@ -83,19 +61,15 @@ void cl_application::build_tree_objects()
 	}while(true);
 
 	int idReady = 0;
-	do
-	{
-		cin >> nextObjName >> idReady;
-		if (std::cin.eof()) break;
-
+	while(cin >> nextObjName >> idReady) {
 		nextObj = get_child(nextObjName);
 		if (nextObj == nullptr) {
-			cerr << "Error::Object not found!" << endl;
+			cout << "Error::Object not found!" << endl;
 			return;
 		} else {
 			nextObj->setIdReady(idReady);
 		}
-	}while(true);
+	}
 }
 
 int cl_application::exec_app()
