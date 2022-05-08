@@ -22,6 +22,7 @@
 
 #include "Task31/Task31.h"
 #include "Task32/Task32.h"
+#include "Task33/Task33.h"
 
 #include <iostream>
 #include "../Utils/Utils.h"
@@ -57,6 +58,7 @@ void Task::init() {
 
 	reg(new Task31()); // 2-ая часть курсовой
 	reg(new Task32()); // 3-ая часть курсовой
+	reg(new Task33()); // 4-ая часть курсовой
 }
 
 bool Task::issetTasks() {

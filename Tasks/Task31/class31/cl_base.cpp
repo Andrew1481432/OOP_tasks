@@ -40,6 +40,7 @@ void cl_base::setIdReady(int id) {
 	}
 }
 
+
 bool cl_base::isReady() {
 	return this->idReady != 0;
 }
