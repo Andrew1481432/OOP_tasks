@@ -251,7 +251,11 @@ void cl_base::emit_signal(std::function<void(string&)> s_ignal, string &s_comman
 	while (it_connects != connects.end())
 	{
 		p_handler = (*it_connects)->p_handler;
-		(p_handler)((*it_connects)->p_cl_base, s_command);
+		cl_base* clTarget = (*it_connects)->p_cl_base;
+		if(clTarget->isReady())
+		{
+			(p_handler)(clTarget, s_command);
+		}
 		it_connects++;
 	}
 }

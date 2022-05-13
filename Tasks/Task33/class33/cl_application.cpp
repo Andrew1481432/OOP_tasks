@@ -75,17 +75,17 @@ void cl_application::createConnections()
 	while(cin >> absoluteDirSource && absoluteDirSource != "end_of_connections") {
 		sourceObj = this->get_object_by_path(absoluteDirSource);
 		if (sourceObj == nullptr) {
-			cout << "Object "<<absoluteDirSource<<" not found" << endl;
-			return;
+			cout << endl << "Object "<<absoluteDirSource<<" not found";
+			continue;
 		}
 		cin >> absoluteDirTarget;
 		targetObj = this->get_object_by_path(absoluteDirTarget);
 		if (targetObj == nullptr) {
-			cout << "Handler object "<<absoluteDirSource<<" not found" << endl;
-			return;
+			cout << endl << "Handler object "<<absoluteDirTarget<<" not found";
+			continue;
 		}
 		sourceObj->set_connect(targetObj, [](cl_base* target, string &s) {
-			cout << "Signal to "<<target->getAbsoluteDir()<<" Text:  " << s << endl;
+			cout << endl << "Signal to "<<target->getAbsoluteDir()<<" Text:  " << s;
 		});
 	}
 }
@@ -105,28 +105,31 @@ void cl_application::executeCmds()
 			msg.erase(0,1);
 
 			sourceObj = this->get_object_by_path(dirObj);
+			if (sourceObj == nullptr) {
+				cout << endl << "Object "<<dirObj<<" not found";
+				continue;
+			}
 			sourceObj->emit_signal([sourceObj](string &s) {
 				s += " (class: "+std::to_string(sourceObj->getClassId())+")";
-				cout << "Signal from " << sourceObj->getAbsoluteDir() << endl;
+				cout << endl << "Signal from " << sourceObj->getAbsoluteDir();
 			},msg);
 		} else if(cmd == "DELETE_CONNECT" || cmd == "SET_CONNECT") { // удаление связи, установка связи
 			string absoluteDirSource, absoluteDirTarget;
 			cin >> absoluteDirSource;
 			sourceObj = this->get_object_by_path(absoluteDirSource);
 			if (sourceObj == nullptr) {
-				cout << "Object "<<absoluteDirSource<<" not found" << endl;
-				return;
+				cout << endl << "Object "<<absoluteDirSource<<" not found";
+				continue;
 			}
 			cin >> absoluteDirTarget;
 			targetObj = this->get_object_by_path(absoluteDirTarget);
 			if (targetObj == nullptr) {
-				cout << "Handler object "<<absoluteDirSource<<" not found" << endl;
-				return;
+				cout << endl <<"Handler object "<<absoluteDirTarget<<" not found";
+				continue;
 			}
-
 			if(cmd == "SET_CONNECT") {
 				sourceObj->set_connect(targetObj, [](cl_base* target, string &s) {
-					cout << "Signal to "<<target->getAbsoluteDir()<<" Text:  " << s << endl;
+					cout << endl << "Signal to "<<target->getAbsoluteDir()<<" Text:  " << s;
 				});
 			} else {
 				sourceObj->delete_connect(targetObj);
@@ -137,18 +140,26 @@ void cl_application::executeCmds()
 			int idReady;
 			cin >> idReady;
 			sourceObj = this->get_object_by_path(dirObj);
+			if (sourceObj == nullptr) {
+				cout << endl << "Object "<<dirObj<<" not found";
+				continue;
+			}
 			sourceObj->setIdReady(idReady);
 		} else {
-			cout << "Error::CMD " << cmd << " not found!" << endl;
+			cout << endl << "Error::CMD " << cmd << " not found!";
+			return;
 		}
 	}
 }
 
 int cl_application::exec_app()
 {
+	/*string test;
+	while(getline(cin, test)) {
+		cout << test << endl;
+	}*/
 	cout << "Object tree" << endl;
 	show_object_tree();
-	cout << endl;
 	createConnections();
 	this->setIdReadyAll(1);
 	executeCmds();
