@@ -7,6 +7,14 @@ cl_base::cl_base(cl_base *p_parent, string object_name)
 	set_object_name(object_name);
 	this->p_parent = p_parent;
 	set_parent(p_parent);
+
+	signalObj = [&](string &s) {
+		s += " (class: "+std::to_string(getClassId())+")";
+		cout << endl << "Signal from " << getAbsoluteDir();
+	};
+	handlerObj = [](cl_base* target, string &s) {
+		cout << endl << "Signal to "<<target->getAbsoluteDir()<<" Text:  " << s;
+	};
 }
 
 int cl_base::getClassId()
@@ -252,9 +260,12 @@ void cl_base::emit_signal(std::function<void(string&)> s_ignal, string &s_comman
 	{
 		p_handler = (*it_connects)->p_handler;
 		cl_base* clTarget = (*it_connects)->p_cl_base;
-		if(clTarget->isReady())
+		if((*it_connects)->p_signal.target_type() == s_ignal.target_type())
 		{
-			(p_handler)(clTarget, s_command);
+			if (clTarget->isReady())
+			{
+				(p_handler)(clTarget, s_command);
+			}
 		}
 		it_connects++;
 	}
@@ -267,14 +278,15 @@ void cl_base::emit_signal(std::function<void(string&)> s_ignal, string &s_comman
  указатель на целевой объект
  указатель на метод обработчика целевого объекта.
  */
-
-void cl_base::delete_connect(cl_base *target)
+void cl_base::delete_connect(std::function<void(string&)> s_ignal, cl_base *target)
 {
 	if(connects.empty()) return;
 	it_connects = connects.begin();
+
 	while (it_connects != connects.end())
 	{
-		if(target == (*it_connects)->p_cl_base) {
+		if(s_ignal.target_type() == (*it_connects)->p_signal.target_type() && target == (*it_connects)->p_cl_base)
+		{
 			connects.erase(it_connects);
 			return;
 		}
@@ -295,25 +307,31 @@ void cl_base::delete_connect(cl_base *target)
  *	((void(*)(cl_base *, string &))(&(p_ob_3->hendler_1)))
  *	);
  *
+ * @param p_signal Указатель на метод сигнала
  * @param p_ob_handler указатель на целевой объект
  * @param p_handler указатель на метод обработчика целевого объекта
  */
-void cl_base::set_connect(cl_base *p_ob_handler,
-						  void(*p_handler)(cl_base *p_pb, string &))
+void cl_base::set_connect(std::function<void(string&)> p_signal, cl_base *p_ob_handler,
+                          void(*p_handler)(cl_base *p_pb, string &))
 {
 	//-------------------------------------------------------------------------
+	// Цикл для исключения повторного установления связи
 	if (connects.size() > 0) {
 		it_connects = connects.begin();
 		while (it_connects != connects.end()) {
-			if(p_ob_handler == (*it_connects)->p_cl_base) {
+			if(p_signal.target_type() == (*it_connects)->p_signal.target_type() &&
+			   p_ob_handler == (*it_connects)->p_cl_base &&
+			   p_handler == (*it_connects)->p_handler
+					) {
 				return;
 			}
 			it_connects++;
 		}
 	}
+
 	c_handler *p_value = new c_handler();
+	p_value->p_signal = p_signal;
 	p_value->p_cl_base = p_ob_handler;
 	p_value->p_handler = p_handler;
-
 	connects.push_back(p_value);
 }

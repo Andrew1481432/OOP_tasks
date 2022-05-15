@@ -117,8 +117,8 @@ void cl_base::show_object_next(cl_base *ob_parent, int i_level, bool isShowReady
 	if(isShowReady) {
 		cout << " is "<< (!ob_parent->isReady() ? "not " : "") << "ready";
 	}
-	if (ob_parent->children.size() == 0) return;
 
+	if (ob_parent->children.size() == 0) return;
 	ob_parent->it_child = ob_parent->children.begin();
 	while (ob_parent->it_child != ob_parent->children.end())
 	{

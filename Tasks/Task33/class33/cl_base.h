@@ -17,6 +17,7 @@ namespace class33
 		bool idReady;
 
 		struct c_handler {
+			std::function<void(string&)> p_signal;
 			cl_base *p_cl_base;
 			void(*p_handler)(cl_base *p_ob, string &);
 		};
@@ -30,6 +31,10 @@ namespace class33
 		void show_object_next(cl_base *, int);
 		vector<string> split(const string&, char);
 	public:
+		/** реализует схему взаимодействия объектов один ко многим. **/
+		std::function<void(string&)> signalObj;
+		void(*handlerObj)(cl_base *p_ob, string &);
+
 		// region ID
 		const static int ID = 0;
 		virtual int getClassId();
@@ -39,9 +44,9 @@ namespace class33
 		vector<cl_base *>::iterator it_child;
 
 		// region connections
-		void set_connect(cl_base *, void(*)(cl_base *, string &));
+		void set_connect(std::function<void(string&)>, cl_base *, void(*)(cl_base *, string &));
 		void emit_signal(std::function<void(string&)>, string &);
-		void delete_connect(cl_base *);
+		void delete_connect(std::function<void(string&)>, cl_base *);
 		// endregion
 
 		cl_base(cl_base *p_parent = nullptr, string object_name = "Empty");
